@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ action }} Supplier - Inventory Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">{{ action }} Supplier</h1>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <div class="card-body">
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label required" for="name">Supplier Name</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ supplier.name if supplier else '' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="contact_name">Contact Person</label>
+                <input type="text" id="contact_name" name="contact_name" class="form-control" value="{{ supplier.contact_name if supplier else '' }}">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" value="{{ supplier.email if supplier else '' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="phone">Phone</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" value="{{ supplier.phone if supplier else '' }}">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="address">Address</label>
+                <textarea id="address" name="address" class="form-control" rows="3">{{ supplier.address if supplier else '' }}</textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17,21 17,13 7,13 7,21"/>
+                        <polyline points="7,3 7,8 15,8"/>
+                    </svg>
+                    Save Supplier
+                </button>
+                <a href="{{ url_for('suppliers') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

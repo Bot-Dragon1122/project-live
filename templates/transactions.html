@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Transactions - Inventory Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Transaction History</h1>
+    <a href="{{ url_for('export_transactions', type=filter_type) }}" class="btn btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7,10 12,15 17,10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Export CSV
+    </a>
+</div>
+
+<div class="tab-nav">
+    <a href="{{ url_for('transactions', type='all', date_from=date_from, date_to=date_to, product_id=product_id) }}" class="tab-link {% if filter_type == 'all' %}active{% endif %}">All Transactions</a>
+    <a href="{{ url_for('transactions', type='purchase', date_from=date_from, date_to=date_to, product_id=product_id) }}" class="tab-link {% if filter_type == 'purchase' %}active{% endif %}">Purchases</a>
+    <a href="{{ url_for('transactions', type='sale', date_from=date_from, date_to=date_to, product_id=product_id) }}" class="tab-link {% if filter_type == 'sale' %}active{% endif %}">Sales</a>
+</div>
+
+<form method="GET" action="{{ url_for('transactions') }}" class="filters-bar">
+    <input type="hidden" name="type" value="{{ filter_type }}">
+    
+    <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label" style="font-size: 12px; margin-bottom: 4px;">From Date</label>
+        <input type="date" name="date_from" class="form-control" value="{{ date_from }}" style="width: 160px;">
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label" style="font-size: 12px; margin-bottom: 4px;">To Date</label>
+        <input type="date" name="date_to" class="form-control" value="{{ date_to }}" style="width: 160px;">
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label" style="font-size: 12px; margin-bottom: 4px;">Product</label>
+        <select name="product_id" class="form-control filter-select" style="min-width: 200px;">
+            <option value="">All Products</option>
+            {% for product in products %}
+            <option value="{{ product.id }}" {% if product_id == product.id %}selected{% endif %}>{{ product.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <button type="submit" class="btn btn-secondary" style="margin-top: 20px;">Apply Filters</button>
+    
+    {% if date_from or date_to or product_id %}
+    <a href="{{ url_for('transactions', type=filter_type) }}" class="btn btn-secondary" style="margin-top: 20px;">Clear</a>
+    {% endif %}
+</form>
+
+<div class="card">
+    <div class="table-container">
+        {% if transactions %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Product</th>
+                    <th>Type</th>
+                    <th>Quantity</th>
+                    <th>Notes</th>
+                    <th>User</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.created_at.strftime('%b %d, %Y %H:%M') }}</td>
+                    <td>
+                        <strong>{{ transaction.product.name }}</strong>
+                        <br><small class="text-muted">{{ transaction.product.sku }}</small>
+                    </td>
+                    <td>
+                        {% if transaction.type == 'purchase' %}
+                        <span class="badge badge-success">Purchase</span>
+                        {% else %}
+                        <span class="badge badge-primary">Sale</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if transaction.type == 'purchase' %}
+                        <span class="type-purchase" style="font-weight: 600;">+{{ transaction.quantity }}</span>
+                        {% else %}
+                        <span class="type-sale" style="font-weight: 600;">-{{ transaction.quantity }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ transaction.notes or '-' }}</td>
+                    <td>
+                        {% if transaction.user %}
+                        {{ transaction.user.username }}
+                        {% else %}
+                        <span class="text-muted">System</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            <h3>No transactions found</h3>
+            <p>{% if filter_type != 'all' or date_from or date_to or product_id %}Try adjusting your filters or {% endif %}transactions will appear here when you update product stock.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Low Stock Items - Inventory Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Low Stock Items</h1>
+</div>
+
+<div class="card">
+    <div class="table-container">
+        {% if products %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>SKU</th>
+                    <th>Category</th>
+                    <th>Current Stock</th>
+                    <th>Reorder Level</th>
+                    <th>Supplier</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        <strong>{{ product.name }}</strong>
+                    </td>
+                    <td><span class="badge badge-secondary">{{ product.sku }}</span></td>
+                    <td>
+                        {% if product.category %}
+                        {{ product.category.name }}
+                        {% else %}
+                        <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if product.quantity == 0 %}
+                        <span class="badge badge-danger">Out of Stock</span>
+                        {% else %}
+                        <span class="badge badge-warning">{{ product.quantity }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ product.reorder_level }}</td>
+                    <td>
+                        {% if product.supplier %}
+                        {{ product.supplier.name }}
+                        {% else %}
+                        <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('update_stock', id=product.id) }}" class="btn btn-success btn-sm">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Restock
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22,4 12,14.01 9,11.01"/>
+            </svg>
+            <h3>All stocked up!</h3>
+            <p>No products are running low on stock. Great inventory management!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

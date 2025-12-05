@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Import Products - Inventory Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Import Products from CSV</h1>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Upload CSV File</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label class="form-label required" for="file">Select CSV File</label>
+                    <input type="file" id="file" name="file" class="form-control" accept=".csv" required>
+                    <small class="text-muted">Maximum file size: 5MB</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17,8 12,3 7,8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        Import Products
+                    </button>
+                    <a href="{{ url_for('products') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">CSV Format Guide</h2>
+        </div>
+        <div class="card-body">
+            <p>Your CSV file should have the following columns:</p>
+            
+            <table style="margin: 16px 0;">
+                <thead>
+                    <tr>
+                        <th>Column Name</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>Name</code></td>
+                        <td><span class="badge badge-danger">Yes</span></td>
+                        <td>Product name</td>
+                    </tr>
+                    <tr>
+                        <td><code>SKU</code></td>
+                        <td><span class="badge badge-danger">Yes</span></td>
+                        <td>Unique product code</td>
+                    </tr>
+                    <tr>
+                        <td><code>Description</code></td>
+                        <td><span class="badge badge-secondary">No</span></td>
+                        <td>Product description</td>
+                    </tr>
+                    <tr>
+                        <td><code>Category</code></td>
+                        <td><span class="badge badge-secondary">No</span></td>
+                        <td>Category name (created if not exists)</td>
+                    </tr>
+                    <tr>
+                        <td><code>Supplier</code></td>
+                        <td><span class="badge badge-secondary">No</span></td>
+                        <td>Supplier name (created if not exists)</td>
+                    </tr>
+                    <tr>
+                        <td><code>Purchase Price</code></td>
+                        <td><span class="badge badge-secondary">No</span></td>
+                        <td>Cost price (default: 0)</td>
+                    </tr>
+                    <tr>
+                        <td><code>Selling Price</code></td>
+                        <td><span class="badge badge-secondary">No</span></td>
+                        <td>Retail price (default: 0)</td>
+                    </tr>
+                    <tr>
+                        <td><code>Quantity</code></td>
+                        <td><span class="badge badge-secondary">No</span></td>
+                        <td>Initial stock (default: 0)</td>
+                    </tr>
+                    <tr>
+                        <td><code>Reorder Level</code></td>
+                        <td><span class="badge badge-secondary">No</span></td>
+                        <td>Low stock threshold (default: 10)</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 style="margin-top: 24px; font-size: 16px;">Example CSV:</h3>
+            <pre style="background: var(--gray-100); padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 12px;">Name,SKU,Description,Category,Supplier,Purchase Price,Selling Price,Quantity,Reorder Level
+Laptop Stand,PROD-001,Adjustable aluminum stand,Electronics,Tech Supplies,25.00,49.99,50,10
+Wireless Mouse,PROD-002,Ergonomic wireless mouse,Electronics,Tech Supplies,15.00,29.99,100,20
+Office Chair,PROD-003,Mesh back office chair,Furniture,Office World,120.00,249.99,25,5</pre>
+            
+            <div class="alert alert-info" style="margin-top: 16px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                Products with duplicate SKUs will be skipped. Categories and suppliers will be created automatically if they don't exist.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

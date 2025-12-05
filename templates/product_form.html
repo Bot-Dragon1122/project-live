@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}{{ action }} Product - Inventory Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">{{ action }} Product</h1>
+</div>
+
+<div class="card" style="max-width: 800px;">
+    <div class="card-body">
+        <form method="POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label required" for="name">Product Name</label>
+                    <input type="text" id="name" name="name" class="form-control" value="{{ product.name if product else '' }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="sku">SKU / Product Code</label>
+                    <input type="text" id="sku" name="sku" class="form-control" value="{{ product.sku if product else '' }}" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="description">Description</label>
+                <textarea id="description" name="description" class="form-control" rows="3">{{ product.description if product else '' }}</textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="category_id">Category</label>
+                    <select id="category_id" name="category_id" class="form-control">
+                        <option value="">Select Category</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if product and product.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="supplier_id">Supplier</label>
+                    <select id="supplier_id" name="supplier_id" class="form-control">
+                        <option value="">Select Supplier</option>
+                        {% for supplier in suppliers %}
+                        <option value="{{ supplier.id }}" {% if product and product.supplier_id == supplier.id %}selected{% endif %}>{{ supplier.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label required" for="purchase_price">Purchase Price ($)</label>
+                    <input type="number" id="purchase_price" name="purchase_price" class="form-control" step="0.01" min="0" value="{{ product.purchase_price if product else '0.00' }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required" for="selling_price">Selling Price ($)</label>
+                    <input type="number" id="selling_price" name="selling_price" class="form-control" step="0.01" min="0" value="{{ product.selling_price if product else '0.00' }}" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                {% if not product %}
+                <div class="form-group">
+                    <label class="form-label required" for="quantity">Initial Quantity</label>
+                    <input type="number" id="quantity" name="quantity" class="form-control" min="0" value="0" required>
+                </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label class="form-label required" for="reorder_level">Reorder Level</label>
+                    <input type="number" id="reorder_level" name="reorder_level" class="form-control" min="0" value="{{ product.reorder_level if product else '10' }}" required>
+                    <small class="text-muted">Alert when stock falls to or below this level</small>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17,21 17,13 7,13 7,21"/>
+                        <polyline points="7,3 7,8 15,8"/>
+                    </svg>
+                    Save Product
+                </button>
+                <a href="{{ url_for('products') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
